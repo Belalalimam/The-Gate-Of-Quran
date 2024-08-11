@@ -1,0 +1,11 @@
+.navbar{
+    background-color: rgb(138, 99, 70) !important;
+}
+.logoBrand{
+    font-weight: 1000 !important;
+    font-size: 25px !important;
+}
+.navItem{
+    font-size: 16px !important;
+    font-weight: 600 !important;
+}

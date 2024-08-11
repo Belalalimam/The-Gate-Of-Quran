@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&display=swap');
+/* .cairo-<uniquifier> {
+    font-family: "Cairo", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: <weight>;
+    font-style: normal;
+    font-variation-settings:
+      "slnt" 0;
+  } */
+
+body{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: rgb(153, 132, 118);
+    font-family: "Cairo", sans-serif;
+    direction: rtl;
+}
+
+@media screen and (max-width: 576px) {
+  .prayerCard{
+width: 350px !important;
+
+  }
+  .prayerImg{
+    height: 200px !important;
+  }
+}

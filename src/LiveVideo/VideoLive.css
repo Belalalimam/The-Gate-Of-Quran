@@ -1,0 +1,39 @@
+.video{
+    width: 100%;
+    margin-top: 110px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    
+}
+
+
+
+@media screen and (max-width: 900px) {
+    .video{
+        margin-top: 190px;
+    }
+}
+@media screen and (max-width: 850px) {
+    .video{
+        margin-top: 210px;
+    }
+    .liveTitle{
+        font-size: 38px !important;
+    }
+}
+@media screen and (max-width: 750px) {
+    .video{
+        margin-top: 250px;
+    }
+}
+@media screen and (max-width: 600px) {
+    .video{
+        margin-top: 330px;
+    }
+    .liveTitle{
+        font-size: 30px !important;
+    }
+}
