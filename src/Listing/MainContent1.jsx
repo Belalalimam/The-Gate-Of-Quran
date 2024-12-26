@@ -1,35 +1,61 @@
-import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
 import axios from "axios";
 import "./MainContent.css";
 import { useEffect, useState } from "react";
 import { Grid } from "@mui/material";
 
+
+
 export default function MainContent() {
-  const [reciters, setReciters] = useState([]);
-  const [moshafs, setMoshafs] = useState([]);
-  const [surahs, setSurahs] = useState(<option> اختر السورة</option>);
-  const [audio, setAudio] = useState("");
-  const language = "en";
 
-  const getReciters = async () => {
-    axios.get("https://mp3quran.net/api/v3/reciters").then((res) => {
-      setReciters(res.data.reciters);
-    });
-  };
+  const [reciters, setReciters] = useState();
+  const [moshafs, setMoshafs] = useState();
+  const [surahs, setSurahs] = useState();
+  const [audio, setAudio] = useState();
 
-  const getMoshaf = async (reciter) => {
-    await axios
+  useEffect(() => {
+    function getReciters() {
+      axios.get("https://mp3quran.net/api/v3/reciters").then((res) => {
+        const Reciters = res.data.reciters;
+        setReciters(
+          Reciters.map((r) => {
+            return (
+              <option value={r.id} key={r.id}>
+                {r.name}
+              </option>
+            );
+          })
+        );
+      });
+    }
+    getReciters();
+  }, []);
+
+  function getMoshaf(reciter) {
+    axios
       .get(
-        ` https://mp3quran.net/api/v3/reciters?language=${language}&reciter=${reciter}`
+        ` https://mp3quran.net/api/v3/reciters?reciter=${reciter}`
       )
       .then((res) => {
-        setMoshafs(res.data.reciters[0].moshaf);
+        const Moshafs = res.data.reciters[0].moshaf;
+        setMoshafs(
+          Moshafs.map((data) => (
+            <option
+              key={data.id}
+              value={data.id}
+              data-server={data.server}
+              data-surahlist={data.surah_list}
+            >
+              {data.name}
+            </option>
+          ))
+        );
       });
-  };
-  const getSurah = async (surahServer, surahList) => {
-    await axios.get("https://mp3quran.net/api/v3/suwar").then((res) => {
+  }
+
+
+  function getSurah(surahServer, surahList) {
+    axios.get("https://mp3quran.net/api/v3/suwar").then((res) => {
       const SurahName = res.data.suwar;
       const surahListArray = surahList.split(",");
       const surahOptions = surahListArray.map((surah) => {
@@ -47,120 +73,73 @@ export default function MainContent() {
       });
       setSurahs(surahOptions);
     });
-  };
-
-  function audioPlayer(surahMp3) {
-    setAudio(surahMp3);
   }
 
-  useEffect(() => {
-    getReciters();
-  }, [reciters]);
+  // handelChangesFunctions
+
+  function handelChangeReciters(r) {
+    getMoshaf(r.target.value);
+    setSurahs();
+  }
+
+  function handelChangeMoshaf(m) {
+    const selectedOption =
+      m.currentTarget.options[m.currentTarget.selectedIndex];
+    const surahServer = selectedOption.dataset.server;
+    const surahList = selectedOption.dataset.surahlist;
+    getSurah(surahServer, surahList);
+  }
+
+  function handelChangeSurah(s) {
+    handelChangePlaySurah(s.target.value);
+  }
+
+  function handelChangePlaySurah(surahMp3) {
+    setAudio(surahMp3);
+  }
+  //==== handelChangesFunctions ====
+ 
+
+
+
 
   return (
     <div className="heroImg" id="Listing">
-      <img
-        className="img"
-        src="./img/ashkan-forouzani-sfmsMZ7ezXw-unsplash.jpg"
-        alt=""
-      />
+      <img className="img" src="./img/ashkan-forouzani-sfmsMZ7ezXw-unsplash.jpg" />
       <h1 className="WelcomMasseg"> رحلة طيبة في رحاب القرآن الكريم</h1>
       <div className="modal">
-        <Grid container justifyContent={"space-between"} className="Reciters ">
-          <Grid
-            xs={12}
-            sm={6}
-            md={4}
-            
-            className="inputContainer "
-            style={{ display: "flex", flexDirection: "column", justifyContent:"center" }}
-          >
-            <label className="labelInput" htmlFor="">
-              اختر القارئ
-            </label>
-            <select
-              className="selectedInput"
-              onChange={(e) => {
-                getMoshaf(e.target.value);
+        <Grid container justifyContent={"space-between"} className="Reciters">
 
-                surahs;
-              }}
-              name=""
-            >
-              {reciters.map((reciter) => (
-                <option value={reciter.id} key={reciter.id}>
-                  {reciter.name}
-                </option>
-              ))}
+
+          <Grid className="inputContainer">
+            <label className="labelInput">اختر القارئ </label>
+            <select className="selectedInput" onChange={handelChangeReciters} name="">
+              {reciters}      
               <option value="">اختر القارئ</option>
             </select>
           </Grid>
 
-          <Grid
-            xs={12}
-            sm={6}
-            md={4}
-            
-            className="inputContainer "
-            style={{ display: "flex", flexDirection: "column", justifyContent:"center" }}
-          >
-            <label className="labelInput" htmlFor="">
-              اختر المصحف
-            </label>
-            <select
-              onClick={(e) => {
-                const selectedOption =
-                  e.currentTarget.options[e.currentTarget.selectedIndex];
-                const surahServer = selectedOption.dataset.server;
-                const surahList = selectedOption.dataset.surahlist;
-                getSurah(surahServer, surahList);
-              }}
-              className="selectedInput"
-              name=""
-              id=""
-            >
-              {moshafs.map((data) => (
-                <option
-                  key={data.id}
-                  value={data.id}
-                  data-server={data.server}
-                  data-surahlist={data.surah_list}
-                >
-                  {data.name}
-                </option>
-              ))}
+          <Grid className="inputContainer">
+            <label className="labelInput">اختر المصحف </label>
+            <select onChange={handelChangeMoshaf} className="selectedInput">
+              {moshafs}
               <option value="">اختر المصحف</option>
             </select>
           </Grid>
-          <Grid
-            xs={12}
-            sm={6}
-            md={4}
-            
-            className="inputContainer "
-            style={{ display: "flex", flexDirection: "column", justifyContent:"center" }}
-          >
-            <label className="labelInput" htmlFor="">
-              اختر السورة
-            </label>
-            <select
-              onChange={(e) => {
-                audioPlayer(e.target.value);
-              }}
-              className="selectedInput"
-              name=""
-            >
+
+
+          <Grid className="inputContainer">
+            <label className="labelInput">اختر السورة </label>
+            <select onChange={handelChangeSurah} className="selectedInput">
+              <option> اختر السورة</option>
               {surahs}
             </select>
           </Grid>
+
+
         </Grid>
         <Row className="audioPlayer">
-          <audio
-            className="audioInput"
-            src={audio}
-            controls
-            autoPlay={false}
-          ></audio>
+          <audio className="audioInput" src={audio} controls autoPlay={false} />
         </Row>
       </div>
     </div>

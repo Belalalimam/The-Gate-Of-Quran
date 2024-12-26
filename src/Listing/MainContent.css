@@ -69,7 +69,11 @@
 
 }
 
-
+.inputContainer{
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+}
 /* Media Querie */
 @media screen and (max-width: 900px) {
     .selectedInput{
